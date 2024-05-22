@@ -1,5 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import random
+import time
 
 
 def showDirectedGraph(graph):
@@ -34,9 +36,7 @@ def showDirectedGraph(graph):
 
 
 # 求最短路径，使用Dijkstra算法
-def calcShortestPath(graph, word1=None, word2=None):
-    word1 = input("请输入word1: ")
-    word2 = input("请输入word2: ")
+def calcShortestPath(graph, word1, word2=None):
     nodes = graph.get_vertices()
     if word1 not in nodes or word2 not in nodes:
         print("不存在的结点！")
@@ -103,3 +103,33 @@ def calcShortestPath(graph, word1=None, word2=None):
     plt.axis('off')  # 关闭坐标轴
     plt.savefig("shortest_path.jpg")
     plt.show()  # 显示图形
+
+
+def randomWalk(graph):
+    running = True
+
+    with open('./random_walk.txt', 'w') as f:
+        nodes = graph.get_vertices()
+        walked = {node: [] for node in nodes}
+        start = random.choice(nodes)
+        print(f"开始随机游走，起点为{start}...")
+        print(start, end='')
+        f.write(start)
+        current = start
+        while running:
+            neighbors = graph.get_edges(current)
+            if len(neighbors) == 0:
+                print(f"\n结点{current}无出边，游走结束。")
+                break
+            nextnode = random.choice(neighbors)
+            if nextnode in walked[current]:
+                print(f"\n边{current}→{nextnode}重复，游走结束。")
+                break
+            else:
+                walked[current].append(next)
+                print(f" {nextnode}", end='')
+                f.write(f" {nextnode}")
+                current = nextnode
+
+        if not running:
+            print("结束游走。")

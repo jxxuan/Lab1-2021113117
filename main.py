@@ -96,7 +96,7 @@ def randomWalk(graph):
                 print(f"\n边{current}→{nextnode}重复，游走结束。")
                 break
             else:
-                walked[current].append(next)
+                walked[current].append(nextnode)
                 print(f" {nextnode}", end='')
                 f.write(f" {nextnode}")
                 current = nextnode

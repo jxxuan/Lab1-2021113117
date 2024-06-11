@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import re
 
 
 def showDirectedGraph(graph):
@@ -19,7 +20,8 @@ def showDirectedGraph(graph):
     nx.draw_networkx_nodes(ng, pos, node_color='skyblue', node_size=10)
 
     # 绘制边
-    nx.draw_networkx_edges(ng, pos, arrows=True, arrowsize=20, edge_color='gray')
+    nx.draw_networkx_edges(ng, pos,
+                           arrows=True, arrowsize=20, edge_color='gray')
 
     # 绘制边的权值标签
     nx.draw_networkx_edge_labels(ng, pos, edge_labels=labels)
@@ -34,20 +36,31 @@ def showDirectedGraph(graph):
 
 
 # 求最短路径，使用Dijkstra算法
-def calcShortestPath(graph, word1=None, word2=None):
-    word1 = input("请输入word1: ")
-    word2 = input("请输入word2: ")
+def calcShortestPath(graph, word1="", word2=""):
+    if word1 == "":
+        print("请输入word1！")
+        return "请输入word1！"
+    if word2 == "":
+        print("请输入word2！")
+        return "请输入word2！"
+    if re.search(r'[^a-zA-Z]', word1) is not None or re.search(r'[^a-zA-Z]', word2) is not None:
+        print("无效的输入！")
+        return "无效的输入！"  # 用于unittest匹配
+    word1 = word1.lower()
+    word2 = word2.lower()
+
     nodes = graph.get_vertices()
     if word1 not in nodes or word2 not in nodes:
-        print("不存在的结点！")
-        return
+        result = "不存在的结点！"
+        print(result)
+        return result
     distances = {node: float('inf') for node in graph.get_vertices()}
     precursor = {node: None for node in graph.get_vertices()}
     distances[word1] = 0
     visited = set()
     while word2 not in visited:
-        current_node = min((node for node in graph.get_vertices() if node not in visited),
-                           key=lambda n: distances[n])
+        current_node = min((node for node in graph.get_vertices()
+                            if node not in visited), key=lambda n: distances[n])
         visited.add(current_node)
 
         neighbors = graph.get_edges(current_node)
@@ -63,14 +76,16 @@ def calcShortestPath(graph, word1=None, word2=None):
     current_node = word2
     while current_node != word1:
         if current_node is None:
-            print(f"单词{word1}与{word2}不可达！")
-            return
+            result = f"单词{word1}与{word2}不可达！"
+            print(result)
+            return result
         path.insert(0, current_node)
         current_node = precursor[current_node]
 
     path.insert(0, word1)
     print(f"单词{word1}与{word2}间的最短距离为{distances[word2]}，路径如下：")
-    print("→".join(path))
+    result = "→".join(path)
+    print(result)
 
     # 绘制部分
     nodes = graph.get_vertices()
@@ -87,7 +102,8 @@ def calcShortestPath(graph, word1=None, word2=None):
     # 绘制结点
     nx.draw_networkx_nodes(ng, pos, node_color='skyblue', node_size=10)
     # 绘制边
-    nx.draw_networkx_edges(ng, pos, arrows=True, arrowsize=20, edge_color='gray')
+    nx.draw_networkx_edges(ng, pos, arrows=True,
+                           arrowsize=20, edge_color='gray')
 
     path_style = {
         "edge_color": "red",
@@ -103,3 +119,5 @@ def calcShortestPath(graph, word1=None, word2=None):
     plt.axis('off')  # 关闭坐标轴
     plt.savefig("shortest_path.jpg")
     plt.show()  # 显示图形
+
+    return result

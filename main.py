@@ -1,16 +1,17 @@
-from graph import Graph
 import re
 import tkinter as tk
 from tkinter import filedialog
-from show import showDirectedGraph, calcShortestPath
 import random
-# this is a change for git lab
+from show import showDirectedGraph, calcShortestPath
+from graph import Graph
+
+
 def process_text():
     graph = Graph()
     root = tk.Tk()
     root.withdraw()
     file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         text = file.read()
 
     words = re.findall(r'\b\w+\b', text.lower())
@@ -25,19 +26,19 @@ def process_text():
 
     return graph
 
-def queryBridgeWords(graph, word1='.', word2='.', flag=0):
 
+def queryBridgeWords(graph, word1='.', word2='.', flag=0):
     if flag == 0:
         word1 = input("请输入word1: ")
         word2 = input("请输入word2: ")
         if word1 not in graph.graph and word2 not in graph.graph:
-            print("No word1 '{}' and word2 '{}' in the graph!".format(word1, word2))
+            print(f"No word1 '{word1}' and word2 '{word2}' in the graph!")
             return
         elif word1 not in graph.graph:
-            print("No word1 '{}' in the graph!".format(word1))
+            print(f"No word1 '{word1}' in the graph!")
             return
         elif word2 not in graph.graph:
-            print("No word2 '{}' in the graph!".format(word2))
+            print(f"No word2 '{word2}' in the graph!")
             return
 
         bridge_words = []
@@ -46,10 +47,11 @@ def queryBridgeWords(graph, word1='.', word2='.', flag=0):
                 bridge_words.append(vertex)
 
         if not bridge_words:
-            print("No bridge words from {} to {}!".format(word1, word2))
+            print(f"No bridge words from {word1} to {word2}!")
         else:
             bridge_words_str = ", ".join(bridge_words)
-            print("The bridge words from {} to {} are: {}.".format(word1, word2, bridge_words_str))
+            print(f"The bridge words from {word1} to "
+                  f"{word2} are: {bridge_words_str}.")
 
     if flag == 1:
         if word1 not in graph.graph or word2 not in graph.graph:
@@ -59,6 +61,7 @@ def queryBridgeWords(graph, word1='.', word2='.', flag=0):
             if vertex in graph.graph and word2 in graph.graph[vertex]:
                 bridge_words.append(vertex)
         return bridge_words
+
 
 def generateNewText(graph):
     input_text = input("请输入新文本: ")
@@ -76,10 +79,11 @@ def generateNewText(graph):
     output_text = ' '.join(new_text)
     print(output_text)
 
+
 def randomWalk(graph):
     running = True
 
-    with open('./random_walk.txt', 'w') as f:
+    with open('./random_walk.txt', 'w', encoding='utf-8') as f:
         nodes = graph.get_vertices()
         walked = {node: [] for node in nodes}
         start = random.choice(nodes)
@@ -104,6 +108,7 @@ def randomWalk(graph):
 
         if not running:
             print("结束游走。")
+
 
 def main():
     processed_graph = None
@@ -139,7 +144,9 @@ def main():
             if processed_graph is None:
                 print("请先处理文本!")
             else:
-                calcShortestPath(processed_graph)
+                word1 = input("请输入word1：")
+                word2 = input("请输入word2：")
+                calcShortestPath(processed_graph, word1, word2)
         elif choice == "6":
             if processed_graph is None:
                 print("请先处理文本!")
@@ -149,6 +156,7 @@ def main():
             break
         else:
             print("无效的选项!")
+
 
 if __name__ == "__main__":
     main()

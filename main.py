@@ -80,18 +80,18 @@ def generateNewText(graph):
     print(output_text)
 
 
-def randomWalk(graph):
-    running = True
+def randomWalk(graph, start=""):
+    result = ''
 
     with open('./random_walk.txt', 'w', encoding='utf-8') as f:
         nodes = graph.get_vertices()
         walked = {node: [] for node in nodes}
-        start = random.choice(nodes)
+        start = random.choice(nodes) if start == "" and nodes != [] else start
         print(f"开始随机游走，起点为{start}...")
-        print(start, end='')
+        result += start
         f.write(start)
         current = start
-        while running:
+        while current is not None and current != "":
             neighbors = graph.get_edges(current)
             if len(neighbors) == 0:
                 print(f"\n结点{current}无出边，游走结束。")
@@ -102,12 +102,13 @@ def randomWalk(graph):
                 break
             else:
                 walked[current].append(nextnode)
-                print(f" {nextnode}", end='')
+                result += f" {nextnode}"
                 f.write(f" {nextnode}")
                 current = nextnode
 
-        if not running:
-            print("结束游走。")
+        print("游走结束：", result)
+        return result
+
 
 
 def main():
@@ -151,7 +152,7 @@ def main():
             if processed_graph is None:
                 print("请先处理文本!")
             else:
-                randomWalk(processed_graph)
+                print(randomWalk(processed_graph))
         elif choice == "7":
             break
         else:
